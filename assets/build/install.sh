@@ -11,7 +11,7 @@ apk --no-cache add --virtual build-dependencies \
   go git mercurial nodejs make g++
 
 go get github.com/tools/godep
-npm update npm --global
+npm update npm
 
 # create build directories
 mkdir -p ${GOPATH}
