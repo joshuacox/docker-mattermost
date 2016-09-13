@@ -13,6 +13,7 @@ ENV MATTERMOST_DATA_DIR="${MATTERMOST_HOME}/data" \
 
 RUN apk --no-cache add bash gettext sudo \
     mysql-client postgresql-client \
+    openssh \
     ca-certificates
 
 COPY assets/build/ ${MATTERMOST_BUILD_DIR}/
