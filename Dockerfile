@@ -1,4 +1,4 @@
-FROM alpine:3.3
+FROM alpine-node:latest
 MAINTAINER jasl8r@alum.wpi.edu
 
 ENV MATTERMOST_VERSION=3.3.0 \
