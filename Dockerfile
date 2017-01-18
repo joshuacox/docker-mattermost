@@ -1,7 +1,7 @@
-FROM mhart/alpine-node:latest
+FROM alpine:3.4
 MAINTAINER jasl8r@alum.wpi.edu
 
-ENV MATTERMOST_VERSION=3.3.0 \
+ENV MATTERMOST_VERSION=3.5.1 \
     MATTERMOST_HOME="/opt/mattermost"
 
 ENV MATTERMOST_DATA_DIR="${MATTERMOST_HOME}/data" \
@@ -11,7 +11,7 @@ ENV MATTERMOST_DATA_DIR="${MATTERMOST_HOME}/data" \
     MATTERMOST_CONF_DIR="${MATTERMOST_HOME}/config" \
     MATTERMOST_LOG_DIR="/var/log/mattermost"
 
-RUN apk --no-cache add bash gettext sudo \
+RUN apk --no-cache add bash gettext \
     mysql-client postgresql-client \
     openssh \
     ca-certificates

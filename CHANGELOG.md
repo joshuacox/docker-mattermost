@@ -4,6 +4,22 @@ This file only reflects the changes that are made in this image. Please refer to
 the Mattermost [CHANGELOG](http://docs.mattermost.com/administration/changelog.html)
 for the list of changes in Mattermost.
 
+## 3.5.1
+
+- mattermost 3.5.1
+
+## 3.4.0-1
+
+- add error message to require upgrading to 3.0 or 3.1 before any higher version
+
+## 3.4.0
+
+- mattermost 3.4.0
+- add `MATTERMOST_SITE_URL` and `MATTERMOST_ENABLE_EMAIL_BATCHING` variables
+- add `MATTERMOST_WEBSERVER_MODE` variable to control static file handling
+- add `MATTERMOST_ENABLE_CUSTOM_EMOJI` variable
+- add `MATTERMOST_RESTRICT_DIRECT_MESSAGE` variable
+
 ## 3.1.0
 
 - mattermost 3.1.0

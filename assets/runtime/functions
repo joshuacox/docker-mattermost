@@ -59,7 +59,7 @@ update_template() {
   # Replace placeholders
   (
     export ${VARIABLES[@]}
-    local IFS=":"; sudo -HEu ${USR} envsubst "${VARIABLES[*]/#/$}" < ${tmp_file} > ${FILE}
+    local IFS=":"; envsubst "${VARIABLES[*]/#/$}" < ${tmp_file} > ${FILE}
   )
   rm -f ${tmp_file}
 }
@@ -78,9 +78,9 @@ initialize_logdir() {
 
 install_configuration_templates() {
   echo "Installing configuration templates..."
-  
+
   mkdir -p ${MATTERMOST_CONF_DIR}
-  
+
   install_template root: config.json ${MATTERMOST_CONFIG} 0640
 }
 
@@ -181,8 +181,10 @@ configure_database() {
 
 configure_mattermost() {
   update_template ${MATTERMOST_CONFIG} \
+    MATTERMOST_SITE_URL \
     MATTERMOST_NAME \
     MATTERMOST_PORT \
+    MATTERMOST_WEBSERVER_MODE \
     MATTERMOST_ENABLE_EMAIL_SIGNUP \
     MATTERMOST_SECRET_KEY \
     MATTERMOST_RESET_SALT \
@@ -192,6 +194,8 @@ configure_mattermost() {
     MATTERMOST_MAX_LOGIN_ATTEMPTS \
     MATTERMOST_SEGMENT_KEY \
     MATTERMOST_GOOGLE_KEY \
+    MATTERMOST_RESTRICT_DIRECT_MESSAGE \
+    MATTERMOST_ENABLE_CUSTOM_EMOJI \
     MATTERMOST_ENABLE_ADMIN_INTEGRATIONS \
     MATTERMOST_ENABLE_SLASH_COMMANDS \
     MATTERMOST_ENABLE_INCOMING_WEBHOOKS \
@@ -209,11 +213,11 @@ configure_mattermost() {
     MATTERMOST_CREATE_TEAMS \
     MATTERMOST_CREATE_USERS \
     MATTERMOST_USER_DOMAINS \
-    MATTERMOST_RESTRICT_TEAM_NAMES \
     MATTERMOST_OPEN_SERVER \
     MATTERMOST_EMAIL_SIGNIN \
     MATTERMOST_USERNAME_SIGNIN \
     MATTERMOST_EMAIL_NOTIFICATIONS \
+    MATTERMOST_ENABLE_EMAIL_BATCHING \
     MATTERMOST_EMAIL_VERIFICATION \
     MATTERMOST_ENABLE_PUSH_NOTIFICATIONS \
     MATTERMOST_PUSH_SERVER \
@@ -235,34 +239,27 @@ configure_mattermost() {
 }
 
 configure_smtp() {
-  if [[ -n ${SMTP_HOST} ]]; then
-    echo "Configuring SMTP..."
-    update_template ${MATTERMOST_CONFIG} \
-      SMTP_USER \
-      SMTP_PASS \
-      SMTP_HOST \
-      SMTP_PORT \
-      SMTP_SECURITY \
-      MATTERMOST_NAME \
-      MATTERMOST_EMAIL
-  else
-    sed -i "/SendEmailNotifications/,/ConnectionSecurity/d" ${MATTERMOST_CONFIG}
-  fi
+  echo "Configuring SMTP..."
+  update_template ${MATTERMOST_CONFIG} \
+    SMTP_USER \
+    SMTP_PASS \
+    SMTP_HOST \
+    SMTP_PORT \
+    SMTP_SECURITY \
+    MATTERMOST_NAME \
+    MATTERMOST_EMAIL
 }
 
 configure_gitlab() {
-  if [[ -n ${GITLAB_SECRET} ]]; then
-    echo "Configuring GitLab..."
-    update_template ${MATTERMOST_CONFIG} \
-      GITLAB_SECRET \
-      GITLAB_ID \
-      GITLAB_SCOPE \
-      GITLAB_AUTH_ENDPOINT \
-      GITLAB_TOKEN_ENDPOINT \
-      GITLAB_API_ENDPOINT
-  else
-    sed -i "/GitLabSettings/,/UserApiEndpoint/d" ${MATTERMOST_CONFIG}
-  fi
+  echo "Configuring GitLab..."
+  update_template ${MATTERMOST_CONFIG} \
+    GITLAB_ENABLE \
+    GITLAB_SECRET \
+    GITLAB_ID \
+    GITLAB_SCOPE \
+    GITLAB_AUTH_ENDPOINT \
+    GITLAB_TOKEN_ENDPOINT \
+    GITLAB_API_ENDPOINT
 }
 
 migrate_version() {
@@ -273,6 +270,18 @@ migrate_version() {
     echo "ERROR: "
     echo "  Cannot downgrade from Mattermost version ${CACHE_VERSION} to ${MATTERMOST_VERSION}."
     echo "  Only upgrades are allowed. Please use jasl8r/mattermost:${CACHE_VERSION} or higher."
+    echo "  Cannot continue. Aborting!"
+    echo
+    return 1
+  fi
+
+  if [[ $(vercmp ${MATTERMOST_VERSION} 3.4.0) -ge 0 &&
+        $(vercmp ${CACHE_VERSION} 3.0.0) -lt 0 ]]; then
+    echo
+    echo "ERROR: "
+    echo "  Cannot upgrade from Mattermost version ${CACHE_VERSION} to ${MATTERMOST_VERSION}."
+    echo "  Mattermost version ${CACHE_VERSION} must be upgraded to version 3.0.2 or 3.1.0 first."
+    echo "  Please run jasl8r/mattermost:3.1.0 followed by jasl8r/mattermost:${MATTERMOST_VERSION}"
     echo "  Cannot continue. Aborting!"
     echo
     return 1
