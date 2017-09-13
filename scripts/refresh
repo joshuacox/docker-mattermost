@@ -5,7 +5,5 @@ UPDATER_PHRASE=MATTERMOST_UPDATED
 SED_S="s/^\ \ $UPDATER_PHRASE=.*$/  $UPDATER_PHRASE=$DATE/"
 
 git pull
-#sed -i "s/^\ \ $UPDATER_PHRASE=.*$/  $UPDATER_PHRASE=$DATE/" Dockerfile
-echo $SED_S
-sed -i $SED_S Dockerfile
+sed -i "$SED_S" Dockerfile
 git commit -am "$FORTUNE -- $DATE"
