@@ -4,5 +4,6 @@ FORTUNE=$(fortune -s|sed 's/"//g')
 UPDATER_PHRASE=MATTERMOST_UPDATED
 
 git pull
+echo sed -i "s/^\ \ $UPDATER_PHRASE=.*$/  $UPDATER_PHRASE=$DATE/" Dockerfile
 sed -i "s/^\ \ $UPDATER_PHRASE=.*$/  $UPDATER_PHRASE=$DATE/" Dockerfile
 git commit -am "$FORTUNE -- $DATE"
