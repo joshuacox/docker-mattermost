@@ -2,15 +2,15 @@ FROM alpine:3.4
 MAINTAINER jasl8r@alum.wpi.edu
 
 ENV MATTERMOST_VERSION=3.5.1 \
-    MATTERMOST_HOME="/opt/mattermost" \
-    MATTERMOST_UPDATED=20170828
+  MATTERMOST_HOME="/opt/mattermost" \
+  MATTERMOST_UPDATED=20170828
 
 ENV MATTERMOST_DATA_DIR="${MATTERMOST_HOME}/data" \
-    MATTERMOST_BUILD_DIR="${MATTERMOST_HOME}/build" \
-    MATTERMOST_RUNTIME_DIR="${MATTERMOST_HOME}/runtime" \
-    MATTERMOST_INSTALL_DIR="${MATTERMOST_HOME}/mattermost" \
-    MATTERMOST_CONF_DIR="${MATTERMOST_HOME}/config" \
-    MATTERMOST_LOG_DIR="/var/log/mattermost"
+  MATTERMOST_BUILD_DIR="${MATTERMOST_HOME}/build" \
+  MATTERMOST_RUNTIME_DIR="${MATTERMOST_HOME}/runtime" \
+  MATTERMOST_INSTALL_DIR="${MATTERMOST_HOME}/mattermost" \
+  MATTERMOST_CONF_DIR="${MATTERMOST_HOME}/config" \
+  MATTERMOST_LOG_DIR="/var/log/mattermost"
 
 RUN apk --no-cache add bash gettext \
     mysql-client postgresql-client \
